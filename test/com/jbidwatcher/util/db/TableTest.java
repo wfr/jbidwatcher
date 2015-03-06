@@ -1,6 +1,7 @@
 package com.jbidwatcher.util.db;
 
 import junit.framework.TestCase;
+
 import com.jbidwatcher.util.config.JConfig;
 import com.cyberfox.util.config.ErrorManagement;
 import com.jbidwatcher.util.Record;
@@ -8,6 +9,7 @@ import com.jbidwatcher.util.HashBacked;
 import com.jbidwatcher.Upgrader;
 
 import java.util.List;
+import java.io.File;
 import java.sql.Savepoint;
 
 /**
@@ -27,6 +29,13 @@ public class TableTest extends TestCase {
 
   public void setUp() throws Exception {
     super.setUp();
+    // create temp directory for home that will be removed after the test
+    File tempHome = File.createTempFile("test", null);
+    tempHome.delete();
+    tempHome.mkdirs();
+    tempHome.deleteOnExit();
+    JConfig.setHomeDirectory(tempHome.getAbsolutePath());
+
     JConfig.setLogger(new ErrorManagement());
     JConfig.setConfiguration("db.user", "test_tables");
     JConfig.setConfiguration("db.autocommit", "false");

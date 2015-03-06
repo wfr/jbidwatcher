@@ -17,3 +17,5 @@ s101plugin*
 sign_in*
 error*
 onejar/META-INF/MANIFEST.MF
+/target/
+/target/
