@@ -62,7 +62,7 @@
             <artifactId>jdeskmetrics</artifactId>
             <version>x</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jdeskmetrics.jar</systemPath>
+            <systemPath>/home/traack/Programming/github/dinoboy197/jbidwatcher/lib/jDeskMetrics.jar</systemPath>
         </dependency>
         <dependency>
             <!-- TODO find actual version of this jar -->
@@ -142,7 +142,7 @@
             <artifactId>nonap</artifactId>
             <version>x</version>
             <scope>system</scope>
-            <systemPath>/Users/traack/git/dinoboy197/jbidwatcher/platform/nonap.jar</systemPath>
+            <systemPath>/home/traack/Programming/github/dinoboy197/jbidwatcher/platform/nonap.jar</systemPath>
         </dependency>
         <dependency>
             <!-- TODO find actual version of this jar -->
@@ -161,9 +161,9 @@
             <systemPath>${project.basedir}/lib/txtmark.jar</systemPath>
         </dependency>
         <dependency>
-		    <groupId>org.uispec4j</groupId>
-		    <artifactId>uispec4j</artifactId>
-		    <version>2.4</version>
+		    <groupId>org.easytesting</groupId>
+		    <artifactId>fest-swing</artifactId>
+		    <version>1.2.1</version>
 		    <scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -173,6 +173,33 @@
 		<sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
 		<plugins>
+		    <plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>build-helper-maven-plugin</artifactId>
+		        <version>1.9.1</version>
+		        <executions>
+		          <execution>
+		            <id>add-resource</id>
+		            <phase>generate-resources</phase>
+		            <goals>
+		              <goal>add-resource</goal>
+		            </goals>
+		            <configuration>
+		              <resources>
+		                <resource>
+		                  <directory>.</directory>
+		                  <targetPath>./</targetPath>
+		                  <includes>
+		                      <include>ebay_com.properties</include>
+		                      <include>ebay_ie.properties</include>
+		                      <include>ebay_co_uk.properties</include>
+		                  </includes>
+		                </resource>
+		              </resources>
+		            </configuration>
+		          </execution>
+		        </executions>
+            </plugin>
 		  <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>

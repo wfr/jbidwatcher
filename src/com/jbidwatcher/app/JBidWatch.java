@@ -356,7 +356,7 @@ public final class JBidWatch implements JConfig.ConfigListener {
    *
    * @param args Command line arguments.
    */
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
     JConfig.setLogger(new ErrorManagement());
     if (checkArguments(args)) {
       System.exit(0);
@@ -369,23 +369,35 @@ public final class JBidWatch implements JConfig.ConfigListener {
     System.setProperty("sun.net.client.defaultConnectTimeout", "5000");
     System.setProperty("sun.net.client.defaultReadTimeout", "15000");
 
-    JBidWatch program = getApplication();
+    // the following calls may perform Swing calls. Swing calls MUST be executed in the EDT.
+    // all Swing components must be created in the EDT (this will happen in getApplication, which uses Guice to create
+    //   components
+    // all Swing components must be accessed in the EDT, unless methods being called are thread-safe
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JBidWatch program = getApplication();
 
-    program.configure(args);
-    program.startDatabase();
-    program.setupSearches();
-    program.loadProxySettings();
+        program.configure(args);
+        program.startDatabase();
+        program.setupSearches();
+        program.loadProxySettings();
 
-    JSplashScreen splashScreen = prepSplashScreen();
+        JSplashScreen splashScreen = prepSplashScreen();
 
-    try {
-      program.run(splashScreen);
-      Thread.currentThread().join();
+        try {
+          program.run(splashScreen);
+          //Thread.currentThread().join();
 
-      program.repaint();
-    } catch (Exception e) {
-      JConfig.log().handleException("JBidwatcher: " + e, e);
-    }
+          program.repaint();
+        } catch (Exception e) {
+          JConfig.log().handleException("JBidwatcher: " + e, e);
+        }
+      }
+    });
+    
+    System.out.println("done initializing");
   }
 
   private static JBidWatch getApplication() {
@@ -708,15 +720,31 @@ public final class JBidWatch implements JConfig.ConfigListener {
     AudioPlayer.start();
 
     synchronized(memInfoSynch) { if(_rti == null && JConfig.queryConfiguration("debug.memory", "false").equals("true")) _rti = new RuntimeInfo(); }
-    try {
-      //  Don't leave this thread until the timeQueue has completed; i.e. the program is exiting.
-      timeQueue.join();
-    } catch (InterruptedException e) {
-      JConfig.log().handleException("timeQueue interrupted", e);
-    }
-    internal_shutdown();
-    JConfig.stopMetrics(Constants.PROGRAM_VERS);
-    System.exit(0);
+    
+    // this run() method should exit so that we can exit the EDT thread properly
+    // it's ok if this method exits - the Swing / AWT components are still active and will keep the JVM alive
+    // until they are closed
+    
+    // we'll still keep the timeQueue machinery running in a thread, which will listen for "jbidwatcher" events
+    // to signal shutdown
+
+    new Thread() { public void run() {
+      try {
+        //  Don't leave this thread until the timeQueue has completed; i.e. the program is exiting.
+        timeQueue.join();
+      } catch (InterruptedException e) {
+        JConfig.log().handleException("timeQueue interrupted", e);
+      }
+      internal_shutdown();
+      JConfig.stopMetrics(Constants.PROGRAM_VERS);
+      
+      // TODO - ideally, we'd just close all UI components, and the EDT thread (which should be only non-daemon thread
+      // at this point) will exit, causing the JVM to terminate cleanly.
+      // however, because Guice isn't yet being told to shut down all of it's components, we'll keep the forcable exit()
+      // for now
+      System.exit(0);
+
+    } }.start();
   }
 
   private void preQueueServices(SuperQueue q) {

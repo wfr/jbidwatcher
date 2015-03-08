@@ -11,6 +11,7 @@ import com.jbidwatcher.util.queue.MessageQueue;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 
 public class JSplashScreen extends Window implements MessageQueue.Listener {
   JProgressBar statusBar;
@@ -84,17 +85,29 @@ public class JSplashScreen extends Window implements MessageQueue.Listener {
   }
 
   public void messageAction(Object deQ) {
-    String msg = (String) deQ;
-    if(msg.startsWith("SET ")) {
-      int amount = parseInt(msg.substring(4));
-      showStatus(amount);
-    } else if(msg.startsWith("WIDTH ")) {
-      int width = parseInt(msg.substring(6));
-      setWidth(width);
-    } else if(msg.equals("CLOSE")) {
-      close();
-    } else if(msg.equals("MESSAGE")) {
-      message(msg.substring(8));
+    final String msg = (String) deQ;
+    // can only interact with Swing components on the EDT
+    // calling invokeAndWait here since messageAction() is a synchronous method; we don't want the state machine
+    // to run things out of order
+    try {
+      SwingUtilities.invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          if(msg.startsWith("SET ")) {
+            int amount = parseInt(msg.substring(4));
+            showStatus(amount);
+          } else if(msg.startsWith("WIDTH ")) {
+            int width = parseInt(msg.substring(6));
+            setWidth(width);
+          } else if(msg.equals("CLOSE")) {
+            close();
+          } else if(msg.equals("MESSAGE")) {
+            message(msg.substring(8));
+          }
+        }
+      });
+    } catch (Exception e) {
+      throw new RuntimeException("Could not update JSplashScreen", e);
     }
   }
 }

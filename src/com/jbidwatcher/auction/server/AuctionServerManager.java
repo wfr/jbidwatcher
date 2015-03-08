@@ -18,6 +18,8 @@ import com.jbidwatcher.auction.*;
 
 import java.util.*;
 
+import javax.swing.SwingUtilities;
+
 /**
  * Simplified on February 17, 2008 to be single-auction-site specific;
  * JBidwatcher is not used on any other auction sites than eBay, and hasn't
@@ -157,7 +159,7 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
   }
 
   private void spinOffCompletedLoader(final AuctionServer newServer) {
-    Thread completedHandler = new Thread() {
+    SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         final MessageQueue tabQ = MQFactory.getConcrete("complete Tab");
         tabQ.enqueue("REPORT Importing completed listings");
@@ -172,6 +174,7 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
         final double percentMultiple = 100.0 / ((double)endedCount);
         tabQ.enqueue("PROGRESS");
         tabQ.enqueue("PROGRESS Loading...");
+        // UI is re-painted here - must invoke on the EDT or face potential problems in Swing
         importListingsToUI(newServer, entries, new Report() {
           public void report(AuctionEntry ae, int count) {
             if(percentStep < 1.0) {
@@ -187,7 +190,7 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
         tabQ.enqueue("HIDE");
         AuctionEntry.getRealDatabase().commit();
       }
-    };
+    });
     Thread lostHandler = new Thread() {
       public void run() {
         List<AuctionInfo> lostAuctions = AuctionInfo.findLostAuctions();
@@ -207,7 +210,6 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
         }
       }
     };
-    completedHandler.start();
     lostHandler.start();
   }
 
