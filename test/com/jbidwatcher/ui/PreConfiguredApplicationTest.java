@@ -13,7 +13,9 @@ public class PreConfiguredApplicationTest extends ApplicationTestBase {
   protected void setupApplicationTest(File configurationDirectory) {
     // install pre-configured settings
     try {
-      final String toRun = "rsync -av /home/traack/.jbidwatcher.working/ " + configurationDirectory.getAbsolutePath() + "/";
+      // TODO - make this platform agnostic - rsync may not exist on Mac or Windows
+      // TODO - pull from local test-resources
+      final String toRun = "rsync -av /home/traack/.jbidwatcher/ " + configurationDirectory.getAbsolutePath() + "/";
       Runtime.getRuntime().exec(toRun);
     } catch (IOException e) {
       throw new RuntimeException("Could not copy pre-configured jbidwatcher configuration directory", e);

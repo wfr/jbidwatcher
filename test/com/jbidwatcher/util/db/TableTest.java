@@ -1,16 +1,18 @@
 package com.jbidwatcher.util.db;
 
-import junit.framework.TestCase;
-
-import com.jbidwatcher.util.config.JConfig;
-import com.cyberfox.util.config.ErrorManagement;
-import com.jbidwatcher.util.Record;
-import com.jbidwatcher.util.HashBacked;
-import com.jbidwatcher.Upgrader;
-
-import java.util.List;
 import java.io.File;
 import java.sql.Savepoint;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.junit.Ignore;
+
+import com.cyberfox.util.config.ErrorManagement;
+import com.jbidwatcher.Upgrader;
+import com.jbidwatcher.util.HashBacked;
+import com.jbidwatcher.util.Record;
+import com.jbidwatcher.util.config.JConfig;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,6 +22,7 @@ import java.sql.Savepoint;
  *
  *
  */
+@Ignore
 @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
 public class TableTest extends TestCase {
   Savepoint mSavepoint = null;

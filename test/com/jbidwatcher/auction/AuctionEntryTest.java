@@ -1,14 +1,14 @@
 package com.jbidwatcher.auction;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
-import com.jbidwatcher.util.Currency;
-import com.jbidwatcher.util.config.JConfig;
-import com.cyberfox.util.config.ErrorManagement;
-import com.jbidwatcher.Upgrader;
-
 import java.util.Date;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.junit.Ignore;
+
+import com.jbidwatcher.util.Currency;
 
 /**
  * AuctionEntry Tester.
@@ -17,6 +17,7 @@ import java.util.Date;
  * @version 1.0
  * @since <pre>09/27/2006</pre>
  */
+@Ignore
 public class AuctionEntryTest extends TestCase {
   private AuctionEntry mAE = null;
   MockAuctionInfo mai;

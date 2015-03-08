@@ -1,12 +1,15 @@
 package com.jbidwatcher.auction;
 
+import java.util.Date;
+
 import junit.framework.TestCase;
-import com.jbidwatcher.util.Currency;
-import com.jbidwatcher.util.config.JConfig;
+
+import org.junit.Ignore;
+
 import com.cyberfox.util.config.ErrorManagement;
 import com.jbidwatcher.Upgrader;
-
-import java.util.Date;
+import com.jbidwatcher.util.Currency;
+import com.jbidwatcher.util.config.JConfig;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +19,7 @@ import java.util.Date;
  *
  * Attempt to test the MultiSnipe class.
  */
+@Ignore
 public class MultiSnipeTest extends TestCase {
   public MultiSnipeTest(String name) {
     super(name);

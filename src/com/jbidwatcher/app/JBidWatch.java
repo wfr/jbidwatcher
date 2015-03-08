@@ -397,7 +397,8 @@ public final class JBidWatch implements JConfig.ConfigListener {
       }
     });
     
-    System.out.println("done initializing");
+    // done! main thread will exit now, but since Swing / AWT components have been activated and not yet closed,
+    // the JVM will not exit and program execution will continue normally (and tests can be run properly, too!)
   }
 
   private static JBidWatch getApplication() {

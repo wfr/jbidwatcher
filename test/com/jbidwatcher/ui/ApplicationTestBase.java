@@ -56,7 +56,7 @@ public abstract class ApplicationTestBase {
     ApplicationLauncher.application(JBidWatch.class).withArgs("--usb").start();
     
     // should wait for the JBidwater frame to appear before returning
-    Thread.sleep(10000);
+    //Thread.sleep(10000);
     mainFrameFixture = WindowFinder.findFrame(new GenericTypeMatcher<Frame>(Frame.class) {
       @Override
       protected boolean isMatching(Frame frame) {
