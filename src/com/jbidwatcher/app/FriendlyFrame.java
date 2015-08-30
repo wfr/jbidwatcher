@@ -18,15 +18,7 @@ import java.awt.Dimension;
 import java.awt.Color;
 import java.net.URL;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Morgan
- * Date: Mar 9, 2008
- * Time: 1:38:29 AM
- *
- * Mac friendly (with mac tool menus) frame for JBidwatcher.
- */
-class MacFriendlyFrame extends JFrame {
+class FriendlyFrame extends JFrame {
   private JLabel mStatusBar;
   private JLabel mPrices;
 
@@ -40,7 +32,7 @@ class MacFriendlyFrame extends JFrame {
    * @param iconURL - The URL of the icon to associate with the frame.
    * @param tabManager - The Tab Manager to display within the frame.
    */
-  public MacFriendlyFrame(JBidToolBar toolBar, String title, JMouseAdapter myFrameAdapter, URL iconURL, JTabManager tabManager) {
+  public FriendlyFrame(JBidToolBar toolBar, String title, JMouseAdapter myFrameAdapter, URL iconURL, JTabManager tabManager) {
     super(title);
 
     setMinimumSize(new Dimension(1000, 320));

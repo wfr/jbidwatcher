@@ -40,7 +40,7 @@ public final class UIBackbone implements MessageQueue.Listener {
   private boolean _userValid;
   private Date mNow = new Date();
   private Calendar mCal = new GregorianCalendar();
-  private MacFriendlyFrame mFrame;
+  private FriendlyFrame mFrame;
   private boolean mSmall;
 
   private final AuctionServerManager serverManager;
@@ -511,7 +511,7 @@ public final class UIBackbone implements MessageQueue.Listener {
     SuperQueue.getInstance().getQueue().add(updateEvent, mainServer.getFriendlyName(), wakeUp);
   }
 
-  public void setMainFrame(MacFriendlyFrame frame) {
+  public void setMainFrame(FriendlyFrame frame) {
     mFrame = frame;
   }
 }

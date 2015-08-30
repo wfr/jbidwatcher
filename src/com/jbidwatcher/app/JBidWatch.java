@@ -90,7 +90,7 @@ public final class JBidWatch implements JConfig.ConfigListener {
   private Injector injector;
 
   private final Object memInfoSynch = new Object();
-  private MacFriendlyFrame mainFrame;
+  private FriendlyFrame mainFrame;
   private JTabManager jtmAuctions;
   private static Sparkle mSparkle = null;
 
@@ -127,6 +127,7 @@ public final class JBidWatch implements JConfig.ConfigListener {
 
   private void getUserSetup() {
     JConfig.setConfiguration("config.firstrun", "true");
+    // FIXME: locks indefinitely:
     //configFrameProvider.get().spinWait();
   }
 
@@ -586,10 +587,10 @@ public final class JBidWatch implements JConfig.ConfigListener {
     }
   }
 
-  private MacFriendlyFrame buildFrame() {
+  private FriendlyFrame buildFrame() {
     URL iconURL = JConfig.getResource(JConfig.queryConfiguration("icon", "jbidwatch64.jpg"));
     JMouseAdapter myFrameAdapter = injector.getInstance(JBidFrameMouse.class);
-    return new MacFriendlyFrame(injector.getInstance(JBidToolBar.class), "JBidwatcher", myFrameAdapter, iconURL, jtmAuctions);
+    return new FriendlyFrame(injector.getInstance(JBidToolBar.class), "JBidwatcher", myFrameAdapter, iconURL, jtmAuctions);
   }
 
   /**
@@ -687,24 +688,26 @@ public final class JBidWatch implements JConfig.ConfigListener {
     });
 
     boolean updaterStarted = false;
-    if(Platform.isMac()) {
-      try {
-        mSparkle = new Sparkle();
-        mSparkle.start();
-        updaterStarted = true;
-        JConfig.setConfiguration("temp.sparkle", "true");
-      } catch(Throwable e) {
-        JConfig.log().handleDebugException("Couldn't start Sparkle - This message is normal under OS X 10.4", e);
-        updaterStarted = false;
-        JConfig.setConfiguration("temp.sparkle", "false");
-      }
-    }
+    // TODO: updater disabled in this fork
+//    if(Platform.isMac()) {
+//      try {
+//        mSparkle = new Sparkle();
+//        mSparkle.start();
+//        updaterStarted = true;
+//        JConfig.setConfiguration("temp.sparkle", "true");
+//      } catch(Throwable e) {
+//        JConfig.log().handleDebugException("Couldn't start Sparkle - This message is normal under OS X 10.4", e);
+//        updaterStarted = false;
+//        JConfig.setConfiguration("temp.sparkle", "false");
+//      }
+//    }
 
-    if(!updaterStarted) {
-      TimerHandler updateTimer = new TimerHandler(UpdateManager.getInstance(), HOURS_IN_DAY * MINUTES_IN_HOUR * Constants.ONE_MINUTE);
-      updateTimer.setName("VersionChecker");
-      updateTimer.start();
-    }
+    // TODO: updater disabled in this fork
+//    if(!updaterStarted) {
+//      TimerHandler updateTimer = new TimerHandler(UpdateManager.getInstance(), HOURS_IN_DAY * MINUTES_IN_HOUR * Constants.ONE_MINUTE);
+//      updateTimer.setName("VersionChecker");
+//      updateTimer.start();
+//    }
 
     AudioPlayer.start();
 
@@ -753,7 +756,9 @@ public final class JBidWatch implements JConfig.ConfigListener {
                481 * Constants.ONE_MINUTE + Constants.ONE_SECOND * 17);
 
     q.preQueue("ALLOW_UPDATES", "Swing", now + (Constants.ONE_SECOND * 20));
-    establishMetrics(q, now);
+    
+    // TODO: metrics disabled in this fork
+    //establishMetrics(q, now);
 
     //  Disable this when I am once more gainfully employed.
 //    if(JConfig.queryConfiguration("seen.need_help2") == null) {
