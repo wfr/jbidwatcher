@@ -58,14 +58,6 @@
 		</dependency>
         <dependency>
             <!-- TODO find actual version of this jar -->
-            <groupId>jdeskmetrics</groupId>
-            <artifactId>jdeskmetrics</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>/home/traack/Programming/github/dinoboy197/jbidwatcher/lib/jDeskMetrics.jar</systemPath>
-        </dependency>
-        <dependency>
-            <!-- TODO find actual version of this jar -->
             <groupId>javaxinject</groupId>
             <artifactId>javaxinject</artifactId>
             <version>x</version>
@@ -138,14 +130,6 @@
 		</dependency>
         <dependency>
             <!-- TODO find actual version of this jar -->
-            <groupId>nonap</groupId>
-            <artifactId>nonap</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>/home/traack/Programming/github/dinoboy197/jbidwatcher/platform/nonap.jar</systemPath>
-        </dependency>
-        <dependency>
-            <!-- TODO find actual version of this jar -->
             <groupId>readline</groupId>
             <artifactId>readline</artifactId>
             <version>x</version>
@@ -165,6 +149,22 @@
 		    <artifactId>fest-swing</artifactId>
 		    <version>1.2.1</version>
 		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<!-- TODO find actual version of this jar -->
+			<groupId>jdeskmetrics</groupId>
+			<artifactId>jdeskmetrics</artifactId>
+			<version>x</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/jDeskMetrics.jar</systemPath>
+		</dependency>
+		<dependency>
+			<!-- TODO find actual version of this jar -->
+			<groupId>nonap</groupId>
+			<artifactId>nonap</artifactId>
+			<version>x</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/platform/nonap.jar</systemPath>
 		</dependency>
 	</dependencies>
 
@@ -237,8 +237,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
