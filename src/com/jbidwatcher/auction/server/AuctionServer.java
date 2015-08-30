@@ -339,7 +339,6 @@ public abstract class AuctionServer implements AuctionServerInterface {
 
     if (curAuction == null) {
       JConfig.log().logMessage("Multiple failures attempting to load item " + item_id + ", giving up.");
-      JConfig.getMetrics().trackEventValue("item", "loadfailure", item_id);
 
       if (ae != null && ae.getLastStatus().contains("Seller away - item unavailable.")) {
         ae.setInvalid();

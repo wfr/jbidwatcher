@@ -26,7 +26,7 @@ import java.net.URL;
  *
  * Mac friendly (with mac tool menus) frame for JBidwatcher.
  */
-class MacFriendlyFrame extends JFrame implements com.apple.mrj.MRJQuitHandler, com.apple.mrj.MRJAboutHandler, com.apple.mrj.MRJPrefsHandler {
+class MacFriendlyFrame extends JFrame {
   private JLabel mStatusBar;
   private JLabel mPrices;
 
@@ -44,10 +44,6 @@ class MacFriendlyFrame extends JFrame implements com.apple.mrj.MRJQuitHandler, c
     super(title);
 
     setMinimumSize(new Dimension(1000, 320));
-
-    com.apple.mrj.MRJApplicationUtils.registerQuitHandler(this);
-    com.apple.mrj.MRJApplicationUtils.registerAboutHandler(this);
-    com.apple.mrj.MRJApplicationUtils.registerPrefsHandler(this);
 
     addMouseListener(myFrameAdapter);
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -153,21 +149,6 @@ class MacFriendlyFrame extends JFrame implements com.apple.mrj.MRJQuitHandler, c
 
   public void handlePrefs() {
     MQFactory.getConcrete("user").enqueue("Configure");
-  }
-
-  /**
-   * author: Dan Caprioara on java-dev at lists.apple.com.
-   * <p/>
-   * There is a bug on Mac OS X, when a WindowAdapter
-   * (apple.laf.AquaMenuBarUI$FixupMenuBarWindowAdapter) is
-   * registered repeatedly to the frame, without checking it was
-   * already added. This is done by the apple LF.<p>
-   * <p/>
-   * Here the window listener is first removed, and then added.
-   */
-  public synchronized void addWindowListener(WindowListener listen) {
-    super.removeWindowListener(listen);
-    super.addWindowListener(listen);
   }
 
   public void setStatus(String status) {

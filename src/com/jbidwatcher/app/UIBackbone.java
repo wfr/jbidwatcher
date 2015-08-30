@@ -269,20 +269,16 @@ public final class UIBackbone implements MessageQueue.Listener {
     if(status.startsWith("FAILED")) {
       toolBar.setToolTipText("Login failed.");
       toolBar.setTextIcon(redStatus, redStatus16);
-      JConfig.getMetrics().trackEvent("login", "fail");
       notifyAlert(status.substring("FAILED ".length()));
     } else if(status.startsWith("CAPTCHA")) {
       toolBar.setToolTipText("Login failed due to CAPTCHA.");
       toolBar.setTextIcon(redStatus, redStatus16);
-      JConfig.getMetrics().trackEvent("login", "captcha");
     } else if(status.startsWith("SUCCESSFUL")) {
       toolBar.setToolTipText("Last login was successful.");
       toolBar.setTextIcon(greenStatus, greenStatus16);
-      JConfig.getMetrics().trackEvent("login", "success");
     } else {   //  Status == NEUTRAL
       toolBar.setToolTipText("Last login did not clearly fail, but no valid cookies were received.");
       toolBar.setTextIcon(yellowStatus, yellowStatus16);
-      JConfig.getMetrics().trackEvent("login", "neutral");
     }
   }
 
@@ -489,7 +485,6 @@ public final class UIBackbone implements MessageQueue.Listener {
     Date now = new Date();
     String status = "We appear to be waking from sleep; networking may not be up yet.";
     JConfig.log().logDebug(status);
-    JConfig.getMetrics().trackEventTimed("sleep", "sleep", (int)delta, true);
     List<AuctionEntry> sniped = entryCorral.findAllSniped();
     if (sniped != null && !sniped.isEmpty()) {
       boolean foundSnipe = false;
@@ -502,7 +497,6 @@ public final class UIBackbone implements MessageQueue.Listener {
       }
       if (foundSnipe) {
         status += "  One or more snipes may not have been fired.";
-        JConfig.getMetrics().trackEvent("sleep", "snipe_missed");
       }
       MQFactory.getConcrete("Swing").enqueue(NOTIFY_MSG + status);
     }

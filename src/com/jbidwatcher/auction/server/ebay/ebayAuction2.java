@@ -122,7 +122,6 @@ public class ebayAuction2 extends SpecificAuction {
       }
     } catch (Exception e) {
       JConfig.log().handleException("Error handling thumbnail loading", e);
-      JConfig.getMetrics().trackEvent("failure", "thumbnail_load");
     }
   }
 }

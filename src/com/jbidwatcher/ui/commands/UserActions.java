@@ -493,18 +493,10 @@ public class UserActions implements MessageQueue.Listener {
       for (int aRowList : rowList) {
         AuctionEntry tempEntry = (AuctionEntry) mTabs.getIndexedEntry(aRowList);
 
-        // Metrics
-        if(tempEntry.isSniped()) {
-          JConfig.getMetrics().trackEvent("snipe", "cancel");
-        }
         tempEntry.cancelSnipe(false);
         MQFactory.getConcrete("redraw").enqueue(tempEntry.getIdentifier());
       }
     } else {
-      // Metrics
-      if (ae.isSniped()) {
-        JConfig.getMetrics().trackEvent("snipe", "cancel");
-      }
       ae.cancelSnipe(false);
       MQFactory.getConcrete("redraw").enqueue(ae.getIdentifier());
     }
@@ -773,7 +765,6 @@ public class UserActions implements MessageQueue.Listener {
     }
 
     // Metrics
-    JConfig.getMetrics().trackEventValue("snipe", "multi", Integer.toString(rowList.length));
     for(i=0; i<rowList.length; i++) {
       AuctionEntry stepAE = (AuctionEntry)mTabs.getIndexedEntry(rowList[i]);
       multisnipeManager.addAuctionToMultisnipe(stepAE.getIdentifier(), aeMS);
@@ -855,12 +846,6 @@ public class UserActions implements MessageQueue.Listener {
       }
       boolean wasSniped = ae.isSniped();
       ae.prepareSnipe(bidAmount);
-      // Metrics
-      if (wasSniped) {
-        JConfig.getMetrics().trackEvent("snipe", "changed");
-      } else {
-        JConfig.getMetrics().trackEvent("snipe", "new");
-      }
     } catch(NumberFormatException nfe) {
       JOptionPane.showMessageDialog(src, "You have entered a bad price for your snipe.\n" +
                                     snipeAmount + " is not a valid snipe.\n" +
@@ -1033,7 +1018,6 @@ public class UserActions implements MessageQueue.Listener {
 
     browseTo = inEntry.getBrowseableURL();
 
-    JConfig.getMetrics().trackEvent("browse", "auction");
     MQFactory.getConcrete("browse").enqueue(browseTo);
   }
 

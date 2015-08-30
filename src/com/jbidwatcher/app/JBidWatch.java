@@ -9,7 +9,6 @@ import com.cyberfox.util.config.ErrorManagement;
 
 import com.cyberfox.util.platform.Path;
 import com.cyberfox.util.platform.Platform;
-import com.cyberfox.util.platform.osx.NoNap;
 import com.google.inject.*;
 import com.jbidwatcher.auction.*;
 import com.jbidwatcher.auction.server.AuctionServerFactory;
@@ -33,7 +32,6 @@ import com.jbidwatcher.util.ErrorMonitor;
 import com.jbidwatcher.scripting.Scripting;
 import com.jbidwatcher.util.queue.*;
 import com.jbidwatcher.util.services.AudioPlayer;
-import com.jbidwatcher.util.services.SyncService;
 import com.jbidwatcher.util.xml.XMLElement;
 import com.jbidwatcher.*;
 import com.jbidwatcher.my.MyJBidwatcher;
@@ -95,7 +93,6 @@ public final class JBidWatch implements JConfig.ConfigListener {
   private MacFriendlyFrame mainFrame;
   private JTabManager jtmAuctions;
   private static Sparkle mSparkle = null;
-  private SyncService mServiceAdvertiser;
 
   private RuntimeInfo _rti = null;
   private static final int HOURS_IN_DAY = 24;
@@ -130,7 +127,7 @@ public final class JBidWatch implements JConfig.ConfigListener {
 
   private void getUserSetup() {
     JConfig.setConfiguration("config.firstrun", "true");
-    configFrameProvider.get().spinWait();
+    //configFrameProvider.get().spinWait();
   }
 
   /**
@@ -157,7 +154,8 @@ public final class JBidWatch implements JConfig.ConfigListener {
     //  In the case of the initial configuration, unfortunately it's not possible.
     Platform.setupMacUI();
     if(Platform.isMac()) {
-      NoNap.dontNapMeBro();
+      // FIXME: removed all local JARs
+      // NoNap.dontNapMeBro();
     }
 
     Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -468,7 +466,6 @@ public final class JBidWatch implements JConfig.ConfigListener {
       if (e.getMessage().matches("^Failed to start database.*")) {
         JConfig.log().handleException("JBidwatcher can't access it's database.", e);
         JOptionPane.showMessageDialog(null, "JBidwatcher can't access its database.\nPlease check to see if you are running another instance.", "Can't access auction database", JOptionPane.PLAIN_MESSAGE);
-        JConfig.stopMetrics(Constants.PROGRAM_VERS);
         System.exit(0);
       }
       JConfig.log().handleException("Upgrading error", e);
@@ -574,15 +571,6 @@ public final class JBidWatch implements JConfig.ConfigListener {
       listManager.setBackground(Color.decode('#' + savedBGColor));
     }
 
-    //  Enable the internal server, if it's set.
-    if(JConfig.queryConfiguration("server.enabled", "false").equals("true")) {
-      mServiceAdvertiser = new SyncService(9099);
-      mServiceAdvertiser.advertise();
-    } else {
-      if(mServiceAdvertiser != null) {
-        mServiceAdvertiser.stopAdvertising();
-      }
-    }
     loadProxySettings();
 
     synchronized (memInfoSynch) {
@@ -737,7 +725,6 @@ public final class JBidWatch implements JConfig.ConfigListener {
         JConfig.log().handleException("timeQueue interrupted", e);
       }
       internal_shutdown();
-      JConfig.stopMetrics(Constants.PROGRAM_VERS);
       
       // TODO - ideally, we'd just close all UI components, and the EDT thread (which should be only non-daemon thread
       // at this point) will exit, causing the JVM to terminate cleanly.
@@ -796,18 +783,6 @@ public final class JBidWatch implements JConfig.ConfigListener {
       q.preQueue("Metrics", "user", now + (Constants.ONE_SECOND * 5));
     }
 
-    MQFactory.getConcrete("metrics").registerListener(new MessageQueue.Listener() {
-      public void messageAction(Object deQ) {
-        if(JConfig.sendMetricsAllowed(Constants.PROGRAM_VERS)) {
-          try {
-            JConfig.getMetrics().flush();
-          } catch (IOException e) {
-            JConfig.log().handleDebugException("Couldn't flush analytics to the server.", e);
-          }
-        }
-      }
-    });
-
     q.preQueue("Flush Metrics", "metrics", now + Constants.ONE_DAY, Constants.ONE_DAY);
   }
 
@@ -828,7 +803,6 @@ public final class JBidWatch implements JConfig.ConfigListener {
   public void internal_shutdown() {
     //  Shut down internal timers
     try {
-      if(mServiceAdvertiser != null) mServiceAdvertiser.stop();
       for (Object o : JConfig.getTimers()) {
         ((TimerHandler) o).interrupt();
         try { ((TimerHandler) o).join(); } catch (InterruptedException ignored) {}

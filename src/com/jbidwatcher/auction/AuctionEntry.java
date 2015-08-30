@@ -737,22 +737,9 @@ public class AuctionEntry extends AuctionCore implements Comparable<AuctionEntry
     if (won) {
       JConfig.increment("stats.won");
       MQFactory.getConcrete("won").enqueue(getIdentifier());
-      // Metrics
-      if(getBoolean("was_sniped")) {
-        JConfig.getMetrics().trackEvent("snipe", "won");
-      } else {
-        JConfig.getMetrics().trackEvent("auction", "won");
-      }
     } else {
       MQFactory.getConcrete("notwon").enqueue(getIdentifier());
       // Metrics
-      if (getBoolean("was_sniped")) {
-        JConfig.getMetrics().trackEvent("snipe", "lost");
-      } else {
-        if(isBidOn()) {
-          JConfig.getMetrics().trackEvent("auction", "lost");
-        }
-      }
     }
 
     if (isSniped()) {
@@ -834,11 +821,6 @@ public class AuctionEntry extends AuctionCore implements Comparable<AuctionEntry
       JConfig.log().logDebug("Buying " + quant + " item[s] of (" + getIdentifier() + ")-" + getTitle());
       rval = getServer().buy(getIdentifier(), quant);
       // Metrics
-      if(rval == AuctionServerInterface.BID_BOUGHT_ITEM) {
-        JConfig.getMetrics().trackEvent("buy", "success");
-      } else {
-        JConfig.getMetrics().trackEventValue("buy", "fail", Integer.toString(rval));
-      }
       saveDB();
     }
     return rval;

@@ -20,26 +20,10 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-		    <!-- TODO find actual version of this jar -->
-			<groupId>annotations</groupId>
-			<artifactId>annotations</artifactId>
-			<version>x</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/annotations.jar</systemPath>
-		</dependency>
         <dependency>
             <groupId>aopalliance</groupId>
             <artifactId>aopalliance</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
-            <!-- TODO find actual version of this jar -->
-            <groupId>apple</groupId>
-            <artifactId>apple</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/apple.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
@@ -56,22 +40,6 @@
 		    <artifactId>guice-assistedinject</artifactId>
 		    <version>3.0</version>
 		</dependency>
-        <dependency>
-            <!-- TODO find actual version of this jar -->
-            <groupId>javaxinject</groupId>
-            <artifactId>javaxinject</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/javax.inject.jar</systemPath>
-        </dependency>
-        <dependency>
-            <!-- TODO find actual version of this jar -->
-            <groupId>jdesktop</groupId>
-            <artifactId>jdesktop</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jdesktop.jar</systemPath>
-        </dependency>
         <dependency>
 		    <groupId>javazoom</groupId>
 		    <artifactId>jlayer</artifactId>
@@ -107,65 +75,32 @@
 		    <artifactId>junit</artifactId>
 		    <version>4.12</version>
 		</dependency>
-		<dependency>
-            <!-- TODO find actual version of this jar -->
-            <groupId>l2fprod-common-fontchooser</groupId>
-            <artifactId>l2fprod-common-fontchooser</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/l2fprod-common-fontchooser.jar</systemPath>
-        </dependency>
-        <dependency>
-            <!-- TODO find actual version of this jar -->
-            <groupId>mahalo</groupId>
-            <artifactId>mahalo</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/mahalo.jar</systemPath>
-        </dependency>
         <dependency>
 		    <groupId>mysql</groupId>
 		    <artifactId>mysql-connector-java</artifactId>
 		    <version>5.1.17</version>
 		</dependency>
         <dependency>
-            <!-- TODO find actual version of this jar -->
-            <groupId>readline</groupId>
-            <artifactId>readline</artifactId>
-            <version>x</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/readline.jar</systemPath>
-        </dependency>
-        <dependency>
-            <!-- TODO find actual version of this jar -->
-            <groupId>txtmark</groupId>
-            <artifactId>txtmark</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/txtmark.jar</systemPath>
-        </dependency>
-        <dependency>
 		    <groupId>org.easytesting</groupId>
 		    <artifactId>fest-swing</artifactId>
 		    <version>1.2.1</version>
 		    <scope>test</scope>
 		</dependency>
-		<dependency>
-			<!-- TODO find actual version of this jar -->
-			<groupId>jdeskmetrics</groupId>
-			<artifactId>jdeskmetrics</artifactId>
-			<version>x</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jDeskMetrics.jar</systemPath>
-		</dependency>
-		<dependency>
-			<!-- TODO find actual version of this jar -->
-			<groupId>nonap</groupId>
-			<artifactId>nonap</artifactId>
-			<version>x</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/platform/nonap.jar</systemPath>
-		</dependency>
+	 <dependency>
+	  <groupId>com.github.rjeschke</groupId>
+	  <artifactId>txtmark</artifactId>
+	  <version>0.13</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>com.intellij</groupId>
+	  <artifactId>annotations</artifactId>
+	  <version>12.0</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>com.l2fprod.common</groupId>
+	  <artifactId>l2fprod-common-fontchooser</artifactId>
+	  <version>6.9.1</version>
+	 </dependency>
 	</dependencies>
 
 	<build>
@@ -192,8 +127,6 @@
 		                  <includes>
 		                      <include>*.properties</include>
 		                      <include>*.jpg</include>
-		                      <include>lib/**/*</include>
-                              <include>icons/**/*</include>
 		                  </includes>
 		                </resource>
 		              </resources>
@@ -237,8 +170,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.2</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>

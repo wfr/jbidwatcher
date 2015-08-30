@@ -8,7 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
-import org.jruby.demo.readline.TextAreaReadline;
+// FIXME: jruby-readline seems to be broken in Maven
+//import org.jruby.demo.readline.TextAreaReadline;
+
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 
@@ -49,14 +51,15 @@ public class ScriptManager implements MessageQueue.Listener
     console.getContentPane().add(pane);
     console.validate();
 
-    final TextAreaReadline tar = new TextAreaReadline(text, " Welcome to the JBidwatcher IRB Scripting Console \n\n");
+    // FIXME
+    //final TextAreaReadline tar = new TextAreaReadline(text, " Welcome to the JBidwatcher IRB Scripting Console \n\n");
 
     final Ruby runtime = Scripting.getRuntime();
     RubyInstanceConfig config = runtime.getInstanceConfig();
     config.setObjectSpaceEnabled(true);
-    Scripting.setOutput(tar.getOutputStream());
-    Scripting.setInput(tar.getInputStream());
-    tar.hookIntoRuntime(runtime);
+//    Scripting.setOutput(tar.getOutputStream());
+//    Scripting.setInput(tar.getInputStream());
+//    tar.hookIntoRuntime(runtime);
 
     t2 = new Thread() {
       public void run() {
