@@ -1,14 +1,11 @@
 package com.jbidwatcher.auction;
 
-import java.util.Date;
-
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.junit.Ignore;
-
+import junit.framework.TestCase;
 import com.jbidwatcher.util.Currency;
+
+import java.util.Date;
 
 /**
  * AuctionEntry Tester.
@@ -17,7 +14,6 @@ import com.jbidwatcher.util.Currency;
  * @version 1.0
  * @since <pre>09/27/2006</pre>
  */
-@Ignore
 public class AuctionEntryTest extends TestCase {
   private AuctionEntry mAE = null;
   MockAuctionInfo mai;
@@ -44,7 +40,7 @@ public class AuctionEntryTest extends TestCase {
   }
 
   public void tearDown() throws Exception {
-    mAE = AuctionEntry.findByIdentifier(mai.getIdentifier());
+    mAE = EntryCorral.findByIdentifier(mai.getIdentifier());
     if(mAE != null) mAE.delete();
     
     super.tearDown();

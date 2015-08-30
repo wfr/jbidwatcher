@@ -91,12 +91,12 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
 
     timeStart("counts");
     // True up the Auction Entries first.  I want this to not be necessary anymore.
-    AuctionEntry.trueUpEntries();
+    EntryCorral.trueUpEntries();
 
-    int entryCount = AuctionEntry.count();
+    int entryCount = EntryCorral.count();
     int auctionCount = AuctionInfo.count();
-    int uniqueEntries = AuctionEntry.uniqueCount();
-    int activeEntries = AuctionEntry.activeCount();
+    int uniqueEntries = EntryCorral.uniqueCount();
+    int activeEntries = EntryCorral.activeCount();
     int uniqueCount = AuctionInfo.uniqueCount();
     timeStop("counts");
 
@@ -104,7 +104,7 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
 
     JConfig.log().logMessage("Loading listings from the database (" + activeEntries + "/" + uniqueEntries + "/" + entryCount + " entries, " + uniqueCount + "/" + auctionCount + " auctions)");
     timeStart("findAll");
-    List<AuctionEntry> entries = AuctionEntry.findActive(); //TODO EntryCorral these
+    List<AuctionEntry> entries = EntryCorral.findActive(); //TODO EntryCorral these
     timeStop("findAll");
     timeStart("findAuctions");
     connectEntries(entries);
@@ -153,14 +153,14 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
   }
 
   private void spinOffCompletedLoader(final AuctionServer newServer) {
-    SwingUtilities.invokeLater(new Runnable() {
+    Thread completedHandler = new Thread() {
       public void run() {
         final MessageQueue tabQ = MQFactory.getConcrete("complete Tab");
         tabQ.enqueue("REPORT Importing completed listings");
         tabQ.enqueue("SHOW");
 
         timeStart("findEnded");
-        List<AuctionEntry> entries = AuctionEntry.findEnded();//TODO EntryCorral these?
+        List<AuctionEntry> entries = EntryCorral.findEnded();//TODO EntryCorral these?
         timeStop("findEnded");
 
         int endedCount = entries.size();
@@ -168,7 +168,6 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
         final double percentMultiple = 100.0 / ((double)endedCount);
         tabQ.enqueue("PROGRESS");
         tabQ.enqueue("PROGRESS Loading...");
-        // UI is re-painted here - must invoke on the EDT or face potential problems in Swing
         importListingsToUI(newServer, entries, new Report() {
           public void report(AuctionEntry ae, int count) {
             if(percentStep < 1.0) {
@@ -182,9 +181,9 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
           }
         });
         tabQ.enqueue("HIDE");
-        AuctionEntry.getRealDatabase().commit();
+        EntryTable.getRealDatabase().commit();
       }
-    });
+    };
     Thread lostHandler = new Thread() {
       public void run() {
         List<AuctionInfo> lostAuctions = AuctionInfo.findLostAuctions();
@@ -200,10 +199,11 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
           }
           MQFactory.getConcrete("recovered Tab").enqueue("REPORT These auctions had lost their settings.");
           MQFactory.getConcrete("recovered Tab").enqueue("SHOW");
-          AuctionEntry.getRealDatabase().commit();
+          EntryTable.getRealDatabase().commit();
         }
       }
     };
+    completedHandler.start();
     lostHandler.start();
   }
 
@@ -305,10 +305,10 @@ public class AuctionServerManager implements MessageQueue.Listener, Resolver {
   public AuctionStats getStats() {
     AuctionStats outStat = new AuctionStats();
 
-    outStat._count = AuctionEntry.count();
-    outStat._completed = AuctionEntry.completedCount();
-    outStat._snipes = AuctionEntry.snipedCount();
-    outStat._nextSnipe = AuctionEntry.nextSniped(); //TODO EntryCorral this?
+    outStat._count = EntryCorral.count();
+    outStat._completed = EntryCorral.completedCount();
+    outStat._snipes = EntryCorral.snipedCount();
+    outStat._nextSnipe = EntryCorral.nextSniped(); //TODO EntryCorral this?
     outStat._nextEnd = null;
     outStat._nextUpdate = null;
 

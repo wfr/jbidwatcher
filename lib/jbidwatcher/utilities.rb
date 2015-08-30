@@ -17,14 +17,15 @@ puts "Loading JBidwatcher Ruby Utilities"
 
 require 'rubygems'
 gems = nil
-if File.exists? 'lib/jbidwatcher/gems.jar'
-  dirname = File.dirname(__FILE__)
+
+dirname = File.dirname(__FILE__)
+if File.exists?(File.join(dirname, 'gems.jar')) || File.exists?('lib/jbidwatcher/gems.jar')
   gems = File.expand_path(File.join(dirname, 'gems.jar'))
 else
   gems = JConfig.java_class.class_loader.resource_as_url('lib/jbidwatcher/gems.jar').to_s
 end
 
-if File.exists? 'lib/jbidwatcher/gixen'
+if File.exists?(File.join(dirname, "gixen")) || File.exists?('lib/jbidwatcher/gixen')
   dirname = File.dirname(__FILE__)
   $:<< File.join(dirname, "gixen")
 else
@@ -32,7 +33,6 @@ else
 end
 
 ENV['GEM_PATH']="#{gems}!/jruby/1.9"
-
 Gem.paths = ENV
 require 'active_support'
 require 'active_support/core_ext'
@@ -47,19 +47,7 @@ require 'ebay_parser'
 require 'time'
 require 'pp'
 require 'gixen'
-
-# Obsoleted by including active_support/core_ext
-unless defined? nil.blank?
-  class NilClass
-    def blank?; true end
-  end
-end
-
-unless defined? nil.empty?
-  class NilClass
-    def empty?; true end
-  end
-end
+require 'column_lookup'
 
 class JBidwatcherUtilities
   MY_JBIDWATCHER_URL = "http://my.jbidwatcher.com:9876/advanced"
@@ -85,16 +73,10 @@ class JBidwatcherUtilities
     MQFactory.getConcrete("user").enqueue(user_event)
   end
 
-  def play_around(message)
-    puts "This is a message: #{message.reverse}"
-  end
-
   def build_url(meth, hash)
-    params = hash.collect {|x,y| "#{CGI.escape(x.to_s)}=#{CGI.escape(y.to_s)}"}.join('&')
-
     uri = "#{MY_JBIDWATCHER_URL}/#{meth}"
     url = URI.parse(uri)
-    [uri, url, params]
+    [uri, url, hash.to_param]
   end
 
   def post(command, hash)
@@ -175,9 +157,10 @@ class JBidwatcherUtilities
   }
 
   def handle_action(action, action_manager, *params)
-    pair = COMMANDS[action] || COMMANDS["Do#{action.gsub(' ', '')}".to_sym]
+    do_action = "Do#{action.gsub(' ', '')}".to_sym
+    pair = COMMANDS[action] || COMMANDS[do_action]
 
-    method = pair.nil? ? "Do#{action.gsub(' ', '')}".to_sym : pair[:name]
+    method = pair.nil? ? do_action : pair[:name]
     arity = pair.nil? ? 0 : pair[:arity]
 
     # Special case params: -1 means pass in null as the sole parameter, -2 means just the auction entry.
@@ -263,13 +246,17 @@ class JBidwatcherUtilities
       Gixen.new(username, password) if username != 'default'
     end
   end
+
+  # This is just a dumping ground right now; I should change that soon.
+  def get_value(entry, column)
+
+  end
 end
 
 # $auction_server_manager = AuctionServerManager.getInstance
 # $auctions_manager = AuctionsManager.getInstance
 # $filter_manager = $auctions_manager.filters
 $table_controller = TableColumnController.getInstance
-
 JBidwatcher = JBidwatcherUtilities.new
 
 JBidwatcher.load_scripts
@@ -280,6 +267,60 @@ class Auction < ActiveRecord::Base
   has_one :entry
   belongs_to :seller
 end
+
+# case TableColumnController.CUR_BID :
+#     return currentBid(aEntry);
+# case TableColumnController.SNIPE_OR_MAX : return formatSnipeAndBid(aEntry);
+# case TableColumnController.MAX : return aEntry.isBidOn() ? formatBid(aEntry, errorNote) :neverBid;
+# case TableColumnController.SNIPE :
+#     return snipeColumn(aEntry, errorNote);
+# case TableColumnController.TIME_LEFT :
+#     return timeLeftColumn(aEntry);
+# case TableColumnController.END_DATE :
+#     return endDateColumn(aEntry);
+# case TableColumnController.TITLE : return XMLElement.decodeString(aEntry.getTitle());
+# case TableColumnController.STATUS : return getEntryIcon(aEntry);
+# case TableColumnController.THUMBNAIL :
+#     return thumbnailColumn(aEntry);
+# case TableColumnController.SELLER :
+#     return aEntry.getSellerName();
+# case TableColumnController.COMMENT :
+#     String comment = aEntry.getComment();
+# return(comment==null? "" :comment);
+# case TableColumnController.BIDDER :
+#     String bidder = aEntry.getHighBidder();
+# if (bidder != null && bidder.length() != 0)
+#   return bidder;
+#   return "--";
+#   case TableColumnController.FIXED_PRICE :
+#       Currency bin = aEntry.getBuyNow();
+#   if (bin.isNull())
+#     return "--";
+#     return bin;
+#     case TableColumnController.SHIPPING_INSURANCE :
+#         Currency ship = aEntry.getShippingWithInsurance();
+#     if (ship.isNull())
+#       return "--";
+#       return ship;
+#       case TableColumnController.ITEM_LOCATION :
+#           return aEntry.getItemLocation();
+#       case TableColumnController.BIDCOUNT :
+#           if (aEntry.getNumBidders() < 0)
+#             return "(FP)";
+#             return Integer.toString(aEntry.getNumBidders());
+#             case TableColumnController.JUSTPRICE :
+#                 return aEntry.getCurrentPrice();
+#             case TableColumnController.SELLER_FEEDBACK :
+#                 return seller.getFeedback();
+#             case TableColumnController.SELLER_POSITIVE_FEEDBACK :
+#                 String fbp = seller.getPositivePercentage();
+#             return (fbp == null || fbp.length() == 0) ? "--" :fbp;
+#             case TableColumnController.CUR_TOTAL :
+#                 return priceWithShippingColumn(aEntry);
+#             case TableColumnController.SNIPE_TOTAL :
+#                 return formatTotalSnipe(aEntry, errorNote);
+#
+#
 
 class Entry < ActiveRecord::Base
   belongs_to :auction
